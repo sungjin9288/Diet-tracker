@@ -1,6 +1,11 @@
 services:
   - type: web
-    name: flask-diet-app
+    name: diet-tracker
     env: python
-    buildCommand: ""
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
+    region: oregon
+    plan: free
+    runtime: python
+    autoDeploy: true
+    branch: main

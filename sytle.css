@@ -1,0 +1,36 @@
+body {
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+h2 {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.card-header {
+  background-color: #0d6efd;
+  color: white;
+  font-weight: bold;
+}
+
+button.btn {
+  min-width: 120px;
+}
+
+ul#foodList li {
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#recommendResult p {
+  margin: 0.5rem 0;
+}
+
+canvas {
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px;
+}

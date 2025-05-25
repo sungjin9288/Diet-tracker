@@ -1,0 +1,32 @@
+{
+  "홍길동": [
+    {
+      "date": "2025-05-25",
+      "total": {
+        "calories": 1480.5,
+        "carbs": 180.2,
+        "protein": 95.4,
+        "fat": 42.1
+      },
+      "foods": [
+        { "name": "닭가슴살", "amount": 150 },
+        { "name": "고구마", "amount": 200 },
+        { "name": "브로콜리", "amount": 100 }
+      ]
+    },
+    {
+      "date": "2025-05-24",
+      "total": {
+        "calories": 1623.8,
+        "carbs": 195.4,
+        "protein": 100.0,
+        "fat": 50.6
+      },
+      "foods": [
+        { "name": "연어", "amount": 120 },
+        { "name": "현미밥", "amount": 180 },
+        { "name": "두부", "amount": 100 }
+      ]
+    }
+  ]
+}

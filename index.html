@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>🥗 식단 분석 시스템</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+  <div class="container py-4">
+    <h2 class="text-center mb-4">🥗 식단 분석 시스템</h2>
+
+    <!-- 사용자 정보 -->
+    <div class="card mb-3">
+      <div class="card-header">사용자 정보</div>
+      <div class="card-body row g-2">
+        <input type="number" id="height" class="form-control col" placeholder="키 (cm)" />
+        <input type="number" id="weight" class="form-control col" placeholder="몸무게 (kg)" />
+        <input type="number" id="age" class="form-control col" placeholder="나이" />
+        <select id="gender" class="form-select col">
+          <option value="m">남성</option>
+          <option value="f">여성</option>
+        </select>
+        <select id="activity" class="form-select col">
+          <option value="low">낮음</option>
+          <option value="medium">보통</option>
+          <option value="high">높음</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 음식 입력 -->
+    <div class="card mb-3">
+      <div class="card-header">음식 입력</div>
+      <div class="card-body row g-2">
+        <select id="foodName" class="form-select col">
+          <option>닭가슴살</option>
+          <option>고구마</option>
+          <option>계란</option>
+          <option>현미밥</option>
+          <option>연어</option>
+          <option>두부</option>
+          <option>브로콜리</option>
+          <option>바나나</option>
+        </select>
+        <input type="number" id="foodAmount" class="form-control col" placeholder="섭취량 (g)" />
+        <button class="btn btn-success col" onclick="addFood()">추가</button>
+      </div>
+      <ul class="list-group list-group-flush" id="foodList"></ul>
+    </div>
+
+    <!-- 분석 버튼 -->
+    <div class="text-center">
+      <button class="btn btn-primary w-100 mb-3" onclick="analyze()">📊 결과 분석</button>
+    </div>
+
+    <!-- 추천/자동 구성 -->
+    <div class="text-center">
+      <button class="btn btn-warning mb-2" id="recommendBtn">🥗 남은 영양소 채우기</button>
+      <button class="btn btn-secondary mb-3" id="autoMealBtn">🤖 AI 식단 조합</button>
+    </div>
+
+    <!-- 결과 분석 -->
+    <div id="result" class="card p-3 mb-3 d-none"></div>
+    <div id="recommendResult" class="mt-3"></div>
+
+    <!-- 공유 기능 -->
+    <div class="text-center mt-3">
+      <button class="btn btn-outline-primary me-2" onclick="copySummary()">📋 결과 복사</button>
+      <button class="btn btn-outline-secondary" onclick="downloadChart()">🖼️ 차트 저장</button>
+    </div>
+
+    <!-- 차트 -->
+    <div class="card mb-4 mt-4">
+      <div class="card-header">📊 섭취 vs 권장 비교</div>
+      <div class="card-body">
+        <canvas id="barChart" height="120"></canvas>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">🍩 영양 비율(Pie)</div>
+      <div class="card-body">
+        <canvas id="pieChart" height="120"></canvas>
+      </div>
+    </div>
+
+    <!-- 식단 저장 -->
+    <div class="text-center">
+      <button class="btn btn-outline-info mb-3" id="savePlanBtn">💾 이 식단 저장</button>
+    </div>
+
+    <div>
+      <h5>🍱 저장된 식단</h5>
+      <ul id="savedPlans" class="list-group"></ul>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
