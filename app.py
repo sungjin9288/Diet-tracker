@@ -27,14 +27,23 @@ def login():
     username = request.form.get("username")
     if username:
         session["user_name"] = username
-        return redirect("/mypage")
+        return redirect("/main")  # ✅ 수정!
     return redirect("/")
+
+
 
 @app.route("/mypage")
 def mypage():
     if "user_name" not in session:
-        return redirect("/")
+        return redirect("/")  # 세션 없으면 로그인 페이지로 이동
     return render_template("mypage.html", user_name=session["user_name"])
+
+@app.route("/main")
+def main():
+    if "user_name" not in session:
+        return redirect("/")  # ❗ 로그인 안한 유저는 막기
+    return render_template("index.html", user_name=session["user_name"])
+
 
 @app.route("/api/history")
 def api_history():
