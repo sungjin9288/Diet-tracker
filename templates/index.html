@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>🥗 식단 분석 시스템</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="/static/script.js"></script>
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <h1 class="text-center mb-4">🥗 식단 분석 시스템</h1>
+
+    <!-- 사용자 정보 입력 -->
+    <div class="card mb-4">
+      <div class="card-header">👤 사용자 정보</div>
+      <div class="card-body row g-3">
+        <div class="col-md-4"><input id="height" type="number" class="form-control" min="0" placeholder="키(cm)"></div>
+        <div class="col-md-4"><input id="weight" type="number" class="form-control" min="0" placeholder="몸무게(kg)"></div>
+        <div class="col-md-4"><input id="age" type="number" class="form-control" min="0" placeholder="나이"></div>
+        <div class="col-md-4">
+          <select id="gender" class="form-select">
+            <option value="m">남성</option>
+            <option value="f">여성</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <select id="activity" class="form-select">
+            <option value="low">활동 적음</option>
+            <option value="medium" selected>보통</option>
+            <option value="high">활동 많음</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <select id="goal" class="form-select">
+            <option value="maintain" selected>유지</option>
+            <option value="diet">다이어트</option>
+            <option value="gain">증량</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 음식 입력 -->
+    <div class="card mb-4">
+      <div class="card-header">🍱 음식 입력</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-5">
+            <select id="foodName" class="form-select"></select>
+          </div>
+          <div class="col-md-5">
+            <input id="foodAmount" type="number" class="form-control" min="1" placeholder="섭취량 (g)">
+          </div>
+          <div class="col-md-2 d-grid">
+            <button class="btn btn-success" onclick="addFood()">추가</button>
+          </div>
+        </div>
+        <ul id="foodList" class="list-group mt-3"></ul>
+      </div>
+    </div>
+
+    <!-- 분석 버튼 -->
+    <div class="d-grid mb-4">
+      <button class="btn btn-primary btn-lg" onclick="calculate()">📊 결과 분석</button>
+    </div>
+
+    <!-- 결과 출력 -->
+    <div class="card mb-4">
+      <div class="card-header">📈 결과 분석</div>
+      <div class="card-body" id="resultArea">
+        <p>🔍 분석 결과가 여기에 표시됩니다.</p>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="card">
+      <div class="card-header">📊 섭취 vs 권장 비교 차트</div>
+      <div class="card-body">
+        <canvas id="chart" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
