@@ -4,8 +4,13 @@ import os
 app = Flask(__name__)
 app.secret_key = "super-secret"
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        if username:
+            session["user"] = username
+            return redirect("/dashboard")
     return render_template("login.html")
 
 @app.route("/dashboard")
