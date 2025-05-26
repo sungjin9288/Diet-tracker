@@ -8,6 +8,22 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-light">
+
+  <!-- ✅ 상단 네비게이션 바 -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="/">🥗 식단관리</a>
+      <div>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row gap-3">
+          <li class="nav-item"><a class="nav-link" href="/">🏠 홈</a></li>
+          <li class="nav-item"><a class="nav-link" href="/main">🍱 메인분석</a></li>
+          <li class="nav-item"><a class="nav-link" href="/mypage">📅 마이페이지</a></li>
+          <li class="nav-item"><a class="nav-link" href="/stats">📈 통계</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
   <div class="container py-4">
     <h3 class="text-center mb-4">📈 식단 통계 분석</h3>
 
@@ -32,10 +48,6 @@
       <div class="card-body">
         <canvas id="statChart" height="100"></canvas>
       </div>
-    </div>
-
-    <div class="text-center">
-      <a href="/mypage" class="btn btn-outline-dark">🔙 마이페이지로</a>
     </div>
   </div>
 
