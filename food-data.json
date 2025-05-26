@@ -1,50 +1,10 @@
 {
-  "닭가슴살": {
-    "calories": 165,
-    "carbs": 0,
-    "protein": 31,
-    "fat": 3.6
-  },
-  "고구마": {
-    "calories": 86,
-    "carbs": 20,
-    "protein": 1.6,
-    "fat": 0.1
-  },
-  "계란": {
-    "calories": 155,
-    "carbs": 1.1,
-    "protein": 13,
-    "fat": 11
-  },
-  "현미밥": {
-    "calories": 111,
-    "carbs": 23,
-    "protein": 2.5,
-    "fat": 0.9
-  },
-  "연어": {
-    "calories": 208,
-    "carbs": 0,
-    "protein": 20,
-    "fat": 13
-  },
-  "두부": {
-    "calories": 76,
-    "carbs": 1.9,
-    "protein": 8,
-    "fat": 4.8
-  },
-  "브로콜리": {
-    "calories": 55,
-    "carbs": 11,
-    "protein": 3.7,
-    "fat": 0.6
-  },
-  "바나나": {
-    "calories": 89,
-    "carbs": 23,
-    "protein": 1.1,
-    "fat": 0.3
-  }
+  "닭가슴살": { "calories": 165, "carbs": 0, "protein": 31, "fat": 3.6 },
+  "고구마": { "calories": 86, "carbs": 20, "protein": 1.6, "fat": 0.1 },
+  "계란": { "calories": 155, "carbs": 1.1, "protein": 13, "fat": 11 },
+  "현미밥": { "calories": 111, "carbs": 23, "protein": 2.5, "fat": 0.9 },
+  "연어": { "calories": 208, "carbs": 0, "protein": 20, "fat": 13 },
+  "두부": { "calories": 76, "carbs": 1.9, "protein": 8, "fat": 4.8 },
+  "브로콜리": { "calories": 55, "carbs": 11, "protein": 3.7, "fat": 0.6 },
+  "바나나": { "calories": 89, "carbs": 23, "protein": 1.1, "fat": 0.3 }
 }

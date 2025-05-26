@@ -11,7 +11,7 @@
   <div class="container py-4">
     <h3 class="text-center mb-4">👤 {{ user_name }}님, 오늘의 식단을 분석해볼까요?</h3>
 
-    <!-- 사용자 정보 입력 -->
+    <!-- 사용자 정보 -->
     <div class="card p-3 mb-3">
       <div class="row g-2">
         <div class="col"><input id="height" class="form-control" type="number" placeholder="키(cm)" /></div>
@@ -41,6 +41,11 @@
             <option value="닭가슴살">닭가슴살</option>
             <option value="고구마">고구마</option>
             <option value="계란">계란</option>
+            <option value="현미밥">현미밥</option>
+            <option value="연어">연어</option>
+            <option value="두부">두부</option>
+            <option value="브로콜리">브로콜리</option>
+            <option value="바나나">바나나</option>
           </select>
         </div>
         <div class="col">
@@ -52,21 +57,25 @@
       </div>
     </div>
 
-    <!-- 결과 분석 -->
+    <!-- 분석 버튼 -->
     <div class="text-center mb-3">
       <button id="analyzeBtn" class="btn btn-primary w-100">📊 결과 분석</button>
     </div>
 
-    <!-- 분석 결과 -->
-    <div id="result" class="card p-3 d-none"></div>
+    <!-- 결과 출력 -->
+    <div id="result" class="card p-3 d-none mb-3"></div>
+
+    <div class="text-center mb-4">
+      <button id="copySummary" class="btn btn-outline-primary me-2">📋 결과 복사</button>
+      <button id="downloadChart" class="btn btn-outline-success">📉 차트 저장</button>
+    </div>
 
     <!-- 차트 -->
-    <div class="card p-3 mt-4">
+    <div class="card p-3 mb-4">
       <h5>📉 섭취 vs 권장 비교</h5>
       <canvas id="barChart"></canvas>
     </div>
-
-    <div class="card p-3 mt-4">
+    <div class="card p-3">
       <h5>🥧 영양 비율(Pie)</h5>
       <canvas id="pieChart"></canvas>
     </div>

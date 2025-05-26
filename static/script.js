@@ -1,19 +1,20 @@
-const foodData = {
-  "닭가슴살": { calories: 165, carbs: 0, protein: 31, fat: 3.6 },
-  "고구마": { calories: 86, carbs: 20, protein: 1.6, fat: 0.1 },
-  "계란": { calories: 155, carbs: 1.1, protein: 13, fat: 11 }
-};
-
 let eatenFoods = [];
+let foodData = {};
 
 document.addEventListener("DOMContentLoaded", () => {
+  // JSON에서 음식 데이터 불러오기
+  fetch("/static/food-data.json")
+    .then(res => res.json())
+    .then(data => {
+      foodData = data;
+    });
+
   bindSafe("addBtn", addFood);
   bindSafe("analyzeBtn", analyze);
   bindSafe("copySummary", copySummary);
   bindSafe("downloadChart", downloadChart);
 });
 
-// ✅ 안전한 버튼 바인딩 함수
 function bindSafe(id, handler) {
   const el = document.getElementById(id);
   if (el) el.addEventListener("click", handler);
@@ -70,6 +71,24 @@ function analyze() {
   `;
 
   renderCharts(total, recommended);
+
+  // ✅ 저장 요청
+  fetch("/api/save", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      total,
+      foods: eatenFoods
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.status === "success") {
+      console.log("✅ 저장 완료");
+    } else {
+      console.warn("❌ 저장 실패:", res.message);
+    }
+  });
 }
 
 function renderCharts(total, recommended) {
@@ -106,7 +125,6 @@ function renderCharts(total, recommended) {
   });
 }
 
-// 선택적: 복사 기능
 function copySummary() {
   const result = document.getElementById("result");
   if (result) {
@@ -115,7 +133,6 @@ function copySummary() {
   }
 }
 
-// 선택적: 차트 저장 기능
 function downloadChart() {
   const canvas = document.getElementById("barChart");
   if (!canvas) return;
