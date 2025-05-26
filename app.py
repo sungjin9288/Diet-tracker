@@ -1,11 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-import json
-import os
+from flask import Flask, render_template, request, redirect, session, jsonify
+import json, os
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = "secret-key"  # 🛡️ 실제 배포 시 환경변수 사용 권장
-
+app.secret_key = "secret-key"
 DATA_FILE = "user_data.json"
 
 def load_data():
@@ -27,23 +25,26 @@ def login():
     username = request.form.get("username")
     if username:
         session["user_name"] = username
-        return redirect("/main")  # ✅ 수정!
+        return redirect("/main")
     return redirect("/")
-
-
-
-@app.route("/mypage")
-def mypage():
-    if "user_name" not in session:
-        return redirect("/")  # 세션 없으면 로그인 페이지로 이동
-    return render_template("mypage.html", user_name=session["user_name"])
 
 @app.route("/main")
 def main():
     if "user_name" not in session:
-        return redirect("/")  # ❗ 로그인 안한 유저는 막기
+        return redirect("/")
     return render_template("index.html", user_name=session["user_name"])
 
+@app.route("/mypage")
+def mypage():
+    if "user_name" not in session:
+        return redirect("/")
+    return render_template("mypage.html", user_name=session["user_name"])
+
+@app.route("/stats")
+def stats():
+    if "user_name" not in session:
+        return redirect("/")
+    return render_template("stats.html", user_name=session["user_name"])
 
 @app.route("/api/history")
 def api_history():
@@ -59,6 +60,9 @@ def api_save():
 
     record = request.get_json()
     record["date"] = datetime.now().strftime("%Y-%m-%d")
+    record["type"] = record.get("type", "일반")
+    record["routine"] = record.get("routine", False)
+    record["weekday"] = record.get("weekday", "")
 
     data = load_data()
     username = session["user_name"]

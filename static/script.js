@@ -1,16 +1,20 @@
+const foodData = {
+  "닭가슴살": { calories: 165, carbs: 0, protein: 31, fat: 3.6 },
+  "고구마": { calories: 86, carbs: 20, protein: 1.6, fat: 0.1 },
+  "계란": { calories: 155, carbs: 1.1, protein: 13, fat: 11 },
+  "현미밥": { calories: 111, carbs: 23, protein: 2.5, fat: 0.9 },
+  "연어": { calories: 208, carbs: 0, protein: 20, fat: 13 },
+  "두부": { calories: 76, carbs: 1.9, protein: 8, fat: 4.8 },
+  "브로콜리": { calories: 55, carbs: 11, protein: 3.7, fat: 0.6 },
+  "바나나": { calories: 89, carbs: 23, protein: 1.1, fat: 0.3 }
+};
+
 let eatenFoods = [];
-let foodData = {};
 
 document.addEventListener("DOMContentLoaded", () => {
-  // JSON에서 음식 데이터 불러오기
-  fetch("/static/food-data.json")
-    .then(res => res.json())
-    .then(data => {
-      foodData = data;
-    });
-
   bindSafe("addBtn", addFood);
   bindSafe("analyzeBtn", analyze);
+  bindSafe("autoMealBtn", generateAutoMeals);
   bindSafe("copySummary", copySummary);
   bindSafe("downloadChart", downloadChart);
 });
@@ -18,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function bindSafe(id, handler) {
   const el = document.getElementById(id);
   if (el) el.addEventListener("click", handler);
-  else console.warn(`⚠️ '${id}' 버튼을 찾을 수 없습니다.`);
 }
 
 function addFood() {
@@ -36,10 +39,7 @@ function analyze() {
   const g = document.getElementById("gender").value;
   const act = document.getElementById("activity").value;
 
-  if (!h || !w || !a) {
-    alert("사용자 정보를 모두 입력해주세요.");
-    return;
-  }
+  if (!h || !w || !a) return alert("사용자 정보를 모두 입력해주세요.");
 
   const bmr = g === "m" ? 10 * w + 6.25 * h - 5 * a + 5 : 10 * w + 6.25 * h - 5 * a - 161;
   const factor = { low: 1.2, medium: 1.55, high: 1.725 }[act];
@@ -62,33 +62,37 @@ function analyze() {
     total.fat += food.fat * ratio;
   });
 
-  document.getElementById("result").classList.remove("d-none");
-  document.getElementById("result").innerHTML = `
-    🔥 섭취 칼로리: ${total.calories.toFixed(0)} kcal<br/>
-    🍚 탄수화물: ${total.carbs.toFixed(1)}g / 권장 ${recommended.carbs}g<br/>
-    🍗 단백질: ${total.protein.toFixed(1)}g / 권장 ${recommended.protein}g<br/>
-    🥑 지방: ${total.fat.toFixed(1)}g / 권장 ${recommended.fat}g
+  const resultBox = document.getElementById("result");
+  resultBox.classList.remove("d-none");
+  resultBox.innerHTML = `
+    <p>🔥 <b>칼로리</b>: ${total.calories.toFixed(0)} kcal / 권장 ${recommended.calories} kcal  
+      ${getFeedbackLabel(total.calories, recommended.calories)}</p>
+    <p>🍚 <b>탄수화물</b>: ${total.carbs.toFixed(1)}g / ${recommended.carbs}g  
+      ${getFeedbackLabel(total.carbs, recommended.carbs)}</p>
+    <p>🍗 <b>단백질</b>: ${total.protein.toFixed(1)}g / ${recommended.protein}g  
+      ${getFeedbackLabel(total.protein, recommended.protein)}</p>
+    <p>🥑 <b>지방</b>: ${total.fat.toFixed(1)}g / ${recommended.fat}g  
+      ${getFeedbackLabel(total.fat, recommended.fat)}</p>
   `;
 
   renderCharts(total, recommended);
+}
 
-  // ✅ 저장 요청
-  fetch("/api/save", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      total,
-      foods: eatenFoods
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.status === "success") {
-      console.log("✅ 저장 완료");
-    } else {
-      console.warn("❌ 저장 실패:", res.message);
-    }
-  });
+function getFeedbackLabel(actual, target) {
+  const rate = (actual / target) * 100;
+  const percent = rate.toFixed(0);
+  let color = "text-success";
+  let message = "💪 적절히 섭취하셨습니다.";
+
+  if (rate < 90) {
+    color = "text-danger";
+    message = "⚠️ 부족합니다! 조금 더 섭취하세요.";
+  } else if (rate > 110) {
+    color = "text-warning";
+    message = "⚠️ 너무 많이 섭취했습니다. 주의하세요!";
+  }
+
+  return `<span class="${color}">${percent}%</span> - ${message}`;
 }
 
 function renderCharts(total, recommended) {
@@ -125,11 +129,70 @@ function renderCharts(total, recommended) {
   });
 }
 
+function generateAutoMeals() {
+  const dailyCalories = 2100;
+  const mealCalories = dailyCalories / 3;
+  const meals = generateMealCombo(mealCalories);
+  const output = meals.map(m => `<li>${m.name} ${m.grams}g (${m.calories} kcal)</li>`).join("");
+
+  meals.forEach(m => eatenFoods.push({ name: m.name, amount: m.grams }));
+
+  const box = document.getElementById("autoMealResult");
+  box.innerHTML = `
+    <h5>🍽️ 자동 식단 추천</h5>
+    <ul>${output}</ul>
+    <p class="text-success mt-2">✅ 자동으로 식단에 추가됨. 결과 분석 클릭 시 반영됩니다.</p>
+  `;
+  box.classList.remove("d-none");
+
+  const today = new Date();
+  const weekDay = today.toLocaleDateString("ko-KR", { weekday: "long" });
+
+  fetch("/api/save", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      total: { calories: 0, carbs: 0, protein: 0, fat: 0 },
+      foods: meals.map(m => ({ name: m.name, amount: m.grams })),
+      type: "추천",
+      routine: true,
+      weekday: weekDay
+    })
+  });
+}
+
+function generateMealCombo(targetCalories) {
+  const macroRatio = { carbs: 0.5, protein: 0.2, fat: 0.3 };
+  const macroTargets = {
+    carbs: (targetCalories * macroRatio.carbs) / 4,
+    protein: (targetCalories * macroRatio.protein) / 4,
+    fat: (targetCalories * macroRatio.fat) / 9
+  };
+
+  const pickedFoods = [];
+
+  for (const [name, food] of Object.entries(foodData)) {
+    const carbScore = Math.abs(food.carbs - macroTargets.carbs / 3);
+    const proteinScore = Math.abs(food.protein - macroTargets.protein / 3);
+    const fatScore = Math.abs(food.fat - macroTargets.fat / 3);
+    const totalScore = carbScore + proteinScore + fatScore;
+
+    pickedFoods.push({ name, food, score: totalScore });
+  }
+
+  pickedFoods.sort((a, b) => a.score - b.score);
+
+  return pickedFoods.slice(0, 3).map(({ name, food }) => {
+    const grams = Math.round((targetCalories / 3) / food.calories * 100);
+    return { name, grams, calories: Math.round(food.calories * (grams / 100)) };
+  });
+}
+
 function copySummary() {
   const result = document.getElementById("result");
   if (result) {
     navigator.clipboard.writeText(result.innerText);
-    alert("결과가 복사되었습니다!");
+    alert("📋 결과 복사 완료!");
   }
 }
 

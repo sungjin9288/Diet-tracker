@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>마이페이지 | 식단 분석 시스템</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -9,43 +9,64 @@
 </head>
 <body class="bg-light">
 
-  <!-- ✅ 공통 네비게이션 -->
+  <!-- ✅ 상단 네비게이션 -->
   <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-4">
     <div class="container-fluid">
       <a class="navbar-brand fw-bold" href="/">🥗 식단관리</a>
-      <div>
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row gap-3">
-          <li class="nav-item"><a class="nav-link" href="/">🏠 홈</a></li>
-          <li class="nav-item"><a class="nav-link" href="/main">🍱 메인분석</a></li>
-          <li class="nav-item"><a class="nav-link" href="/mypage">📅 마이페이지</a></li>
-          <li class="nav-item"><a class="nav-link" href="/stats">📈 통계</a></li>
-        </ul>
-      </div>
+      <ul class="navbar-nav d-flex flex-row gap-3">
+        <li class="nav-item"><a class="nav-link" href="/">🏠 홈</a></li>
+        <li class="nav-item"><a class="nav-link" href="/main">🍱 메인분석</a></li>
+        <li class="nav-item"><a class="nav-link active fw-bold" href="/mypage">📅 마이페이지</a></li>
+        <li class="nav-item"><a class="nav-link" href="/stats">📈 통계</a></li>
+      </ul>
     </div>
   </nav>
 
   <div class="container py-4">
-    <h3 class="text-center mb-4">👤 {{ user_name }}님의 마이페이지</h3>
+    <h3 class="text-center mb-3">👤 {{ user_name }}님의 마이페이지</h3>
 
+    <!-- 🔘 필터 버튼 -->
+    <div class="text-center mb-3">
+      <button class="btn btn-outline-primary me-1" onclick="filterType('all')">📋 전체</button>
+      <button class="btn btn-outline-success me-1" onclick="filterType('일반')">🍱 일반 식단</button>
+      <button class="btn btn-outline-info me-1" onclick="filterType('추천')">✨ 추천 식단</button>
+    </div>
+
+    <!-- 🔘 요일 루틴 필터 (선택적) -->
+    <div class="text-center mb-4">
+      <button class="btn btn-outline-secondary me-1" onclick="filterRoutineByWeekday('월요일')">📆 월요일 루틴</button>
+      <button class="btn btn-outline-secondary me-1" onclick="filterRoutineByWeekday('화요일')">📆 화요일 루틴</button>
+      <button class="btn btn-outline-secondary me-1" onclick="filterRoutineByWeekday('수요일')">📆 수요일 루틴</button>
+      <button class="btn btn-outline-secondary me-1" onclick="filterRoutineByWeekday('목요일')">📆 목요일 루틴</button>
+      <button class="btn btn-outline-secondary me-1" onclick="filterRoutineByWeekday('금요일')">📆 금요일 루틴</button>
+    </div>
+
+    <!-- 평균 통계 -->
     <div class="card mb-4">
-      <div class="card-header">📊 평균 섭취</div>
+      <div class="card-header">📊 최근 식단 평균 분석</div>
       <div class="card-body">
         <ul id="avgSummary"></ul>
       </div>
     </div>
 
+    <!-- 히스토리 그래프 -->
     <div class="card mb-4">
-      <div class="card-header">📈 최근 히스토리</div>
+      <div class="card-header">📈 최근 7일 섭취 이력</div>
       <div class="card-body">
         <canvas id="historyChart" height="100"></canvas>
       </div>
     </div>
 
+    <!-- 일별 기록 리스트 -->
     <div class="card mb-4">
       <div class="card-header">📅 날짜별 식단 기록</div>
       <div class="card-body">
         <ul id="logList" class="list-group"></ul>
       </div>
+    </div>
+
+    <div class="text-center">
+      <a href="/main" class="btn btn-outline-dark">🔙 메인으로 돌아가기</a>
     </div>
   </div>
 

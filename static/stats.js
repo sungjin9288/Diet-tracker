@@ -1,102 +1,96 @@
-const foodData = {
-  "닭가슴살": { calories: 165, carbs: 0, protein: 31, fat: 3.6 },
-  "고구마": { calories: 86, carbs: 20, protein: 1.6, fat: 0.1 },
-  "계란": { calories: 155, carbs: 1.1, protein: 13, fat: 11 }
-};
-
-let eatenFoods = [];
+let fullStatsData = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("addBtn").addEventListener("click", addFood);
-  document.getElementById("analyzeBtn").addEventListener("click", analyze);
+  fetch("/api/history")
+    .then(res => res.json())
+    .then(data => {
+      fullStatsData = data;
+      filterDays(7); // 기본: 최근 7일
+    });
 });
 
-function addFood() {
-  const name = document.getElementById("foodName").value;
-  const amount = parseFloat(document.getElementById("foodAmount").value);
-  if (!name || isNaN(amount)) return;
-  eatenFoods.push({ name, amount });
-  alert(`${name} ${amount}g 추가됨`);
-}
+function filterDays(days) {
+  let filtered = fullStatsData;
 
-function analyze() {
-  const h = parseFloat(document.getElementById("height").value);
-  const w = parseFloat(document.getElementById("weight").value);
-  const a = parseFloat(document.getElementById("age").value);
-  const g = document.getElementById("gender").value;
-  const act = document.getElementById("activity").value;
-
-  if (!h || !w || !a) {
-    alert("사용자 정보를 모두 입력해주세요.");
-    return;
+  if (days > 0) {
+    const today = new Date();
+    filtered = fullStatsData.filter(d => {
+      const recordDate = new Date(d.date);
+      const diff = (today - recordDate) / (1000 * 60 * 60 * 24);
+      return diff <= days;
+    });
   }
 
-  const bmr = g === "m" ? 10 * w + 6.25 * h - 5 * a + 5 : 10 * w + 6.25 * h - 5 * a - 161;
-  const factor = { low: 1.2, medium: 1.55, high: 1.725 }[act];
-  const tdee = bmr * factor;
-
-  const recommended = {
-    calories: Math.round(tdee),
-    carbs: Math.round((tdee * 0.5) / 4),
-    protein: Math.round((tdee * 0.2) / 4),
-    fat: Math.round((tdee * 0.3) / 9)
-  };
-
-  const total = { calories: 0, carbs: 0, protein: 0, fat: 0 };
-  eatenFoods.forEach(({ name, amount }) => {
-    const food = foodData[name];
-    const ratio = amount / 100;
-    total.calories += food.calories * ratio;
-    total.carbs += food.carbs * ratio;
-    total.protein += food.protein * ratio;
-    total.fat += food.fat * ratio;
-  });
-
-  document.getElementById("result").classList.remove("d-none");
-  document.getElementById("result").innerHTML = `
-    🔥 섭취 칼로리: ${total.calories.toFixed(0)} kcal<br/>
-    🍚 탄수화물: ${total.carbs.toFixed(1)}g / 권장 ${recommended.carbs}g<br/>
-    🍗 단백질: ${total.protein.toFixed(1)}g / 권장 ${recommended.protein}g<br/>
-    🥑 지방: ${total.fat.toFixed(1)}g / 권장 ${recommended.fat}g
-  `;
-
-  renderCharts(total, recommended);
+  renderSummary(filtered);
+  renderStatChart(filtered);
 }
 
-function renderCharts(total, recommended) {
-  new Chart(document.getElementById("barChart"), {
-    type: "bar",
+function renderSummary(data) {
+  const summary = { calories: 0, carbs: 0, protein: 0, fat: 0 };
+  const len = data.length || 1;
+
+  data.forEach(d => {
+    summary.calories += d.total.calories || 0;
+    summary.carbs += d.total.carbs || 0;
+    summary.protein += d.total.protein || 0;
+    summary.fat += d.total.fat || 0;
+  });
+
+  const avg = {
+    calories: (summary.calories / len).toFixed(0),
+    carbs: (summary.carbs / len).toFixed(1),
+    protein: (summary.protein / len).toFixed(1),
+    fat: (summary.fat / len).toFixed(1)
+  };
+
+  document.getElementById("summaryList").innerHTML = `
+    <li>🔥 총 칼로리: ${summary.calories.toFixed(0)} kcal</li>
+    <li>🔥 평균 칼로리: ${avg.calories} kcal</li>
+    <li>🍚 평균 탄수화물: ${avg.carbs}g</li>
+    <li>🍗 평균 단백질: ${avg.protein}g</li>
+    <li>🥑 평균 지방: ${avg.fat}g</li>
+  `;
+}
+
+function renderStatChart(data) {
+  const labels = data.map(d => d.date);
+  const carbs = data.map(d => d.total.carbs || 0);
+  const protein = data.map(d => d.total.protein || 0);
+  const fat = data.map(d => d.total.fat || 0);
+
+  new Chart(document.getElementById("statChart"), {
+    type: "line",
     data: {
-      labels: ["칼로리", "탄수화물", "단백질", "지방"],
+      labels,
       datasets: [
         {
-          label: "섭취량",
-          data: [
-            total.calories, total.carbs, total.protein, total.fat
-          ],
-          backgroundColor: "rgba(0, 123, 255, 0.7)"
+          label: "탄수화물",
+          data: carbs,
+          borderColor: "blue",
+          fill: false
         },
         {
-          label: "권장량",
-          data: [
-            recommended.calories, recommended.carbs, recommended.protein, recommended.fat
-          ],
-          backgroundColor: "rgba(200, 200, 200, 0.7)"
+          label: "단백질",
+          data: protein,
+          borderColor: "green",
+          fill: false
+        },
+        {
+          label: "지방",
+          data: fat,
+          borderColor: "purple",
+          fill: false
         }
       ]
     },
-    options: { responsive: true, scales: { y: { beginAtZero: true } } }
-  });
-
-  new Chart(document.getElementById("pieChart"), {
-    type: "pie",
-    data: {
-      labels: ["탄수화물", "단백질", "지방"],
-      datasets: [{
-        data: [total.carbs, total.protein, total.fat],
-        backgroundColor: ["blue", "green", "purple"]
-      }]
-    },
-    options: { responsive: true }
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "top" }
+      },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
   });
 }
